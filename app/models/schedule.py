@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Time, String, Date, DateTime, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, Time, String, Date, DateTime, Boolean, ForeignKey, func
 from app.core.database import Base
 
 class Schedule(Base):
@@ -15,3 +15,5 @@ class Schedule(Base):
     completed_at = Column(DateTime, nullable=True)
     is_checked = Column(Boolean, default=False)
     memo = Column(String(255), nullable=True)
+    created_at = Column(DateTime, default=func.now())
+

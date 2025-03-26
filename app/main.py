@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from app.core.database import Base, engine
-from app.routers import todo, schedule, outing
+from app.routers import todo, schedule, outing, record
 import uvicorn
 
 app = FastAPI()
@@ -12,6 +12,7 @@ Base.metadata.create_all(bind=engine)
 app.include_router(todo.router)
 app.include_router(schedule.router)
 app.include_router(outing.router)
+app.include_router(record.router)
 
 @app.get("/")
 def root():

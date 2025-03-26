@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Enum, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Enum, Boolean, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 
@@ -14,5 +14,6 @@ class Action(Base):
     is_alarm_enabled = Column(Boolean)
     is_voice_enabled = Column(Boolean)
     is_push_enabled = Column(Boolean)
+    created_at = Column(DateTime, default=func.now())
 
     children = relationship("Action", remote_side=[id])
