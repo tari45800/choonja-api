@@ -1,27 +1,46 @@
-import os
-from sqlalchemy import create_engine, text
-from dotenv import load_dotenv
+import requests
+import datetime
+import threading
 
-# ✅ .env 파일 로드
-load_dotenv()
+# 👉 여기에 오늘 할일 예시 데이터
+schedules = [
+    {"name": "기저귀 갈기", "year": "2025", "month": "3", "day": "25", "time": "17:36"},
+    {"name": "수유하기", "year": "2025", "month": "3", "day": "25", "time": "17:36"},
+    {"name": "산책가기", "year": "2025", "month": "3", "day": "26", "time": "10:00"},
+]
 
-# ✅ 환경변수에서 DB 설정 가져오기
-DB_USER = os.getenv("DB_USER", "root")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "1234")
-DB_HOST = os.getenv("DB_HOST", "127.0.0.1")
-DB_PORT = os.getenv("DB_PORT", "3306")
-DB_NAME = os.getenv("DB_NAME", "choonja")
+webhook_url = "http://localhost:8123/api/webhook/choonja_home_assistant"
 
-# ✅ ORM용 DB URL 구성
-DB_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+def send_notification(schedule):
+    message = f"🍼 {schedule['name']} 할 시간이야!"
+    data = {"message": message}
+    res = requests.post(webhook_url, json=data)
+    print(f"[{datetime.datetime.now().time()}] ⏰ 알림 보냄: {message} (Status: {res.status_code})")
 
-# ✅ SQLAlchemy 엔진 생성
-engine = create_engine(DB_URL)
+def schedule_task(schedule):
+    now = datetime.datetime.now()
+    task_time = datetime.datetime(
+        year=int(schedule["year"]),
+        month=int(schedule["month"]),
+        day=int(schedule["day"]),
+        hour=int(schedule["time"].split(":")[0]),
+        minute=int(schedule["time"].split(":")[1])
+    )
+    delay = (task_time - now).total_seconds()
 
-# ✅ 연결 테스트
-try:
-    with engine.connect() as conn:
-        result = conn.execute(text("SELECT 1"))
-        print("✅ ORM으로 DB 연결 성공!")
-except Exception as e:
-    print("❌ ORM 연결 실패:", e)
+    if delay > 0:
+        print(f"⏳ '{schedule['name']}' 알림 예약됨 → {schedule['time']}")
+        threading.Timer(delay, send_notification, [schedule]).start()
+    else:
+        print(f"❌ '{schedule['name']}'은(는) 이미 지난 시간임")
+
+def main():
+    today = datetime.date.today()
+    for schedule in schedules:
+        if (int(schedule["year"]) == today.year and
+            int(schedule["month"]) == today.month and
+            int(schedule["day"]) == today.day):
+            schedule_task(schedule)
+
+if __name__ == "__main__":
+    main()

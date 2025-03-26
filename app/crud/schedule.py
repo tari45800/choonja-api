@@ -3,9 +3,10 @@ from datetime import date
 from app.models.schedule import Schedule
 from app.models.action import Action
 from app.utils.extract_date_parts import extract_date_parts
-from app.utils.get_relative_day_label import get_relative_day_label  # ✅ 이거 추가
+from app.utils.get_relative_day_label import get_relative_day_label 
 
 def check_or_create_schedule(db: Session, action: Action, schedule_date: date) -> str:
+    # 오늘, 내일, 모래로 날짜 변환
     label = get_relative_day_label(schedule_date)
 
     exists = db.query(Schedule).filter(
@@ -18,6 +19,7 @@ def check_or_create_schedule(db: Session, action: Action, schedule_date: date) -
     if exists:
         return f"{label}에 '{action.name}' 할일은 이미 등록되어 있어요."
 
+    # 날짜 년,월,일로 분리
     parts = extract_date_parts(schedule_date)
 
     new_schedule = Schedule(
