@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from app.core.database import Base, engine
-from app.routers import todo, schedule, outing, record, crying
+from app.routers import todo, schedule, outing, record, crying, report
 import uvicorn
 
 app = FastAPI()
@@ -14,6 +14,7 @@ app.include_router(schedule.router)
 app.include_router(outing.router)
 app.include_router(record.router)
 app.include_router(crying.router)
+app.include_router(report.router)
 
 @app.get("/")
 def root():
