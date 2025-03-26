@@ -8,6 +8,7 @@ def get_stock_count(
     keyword_use: str,
     unit_per_purchase: int = 1
 ) -> int:
+    
     # 구매 횟수
     purchase_count = (
         db.query(Schedule)

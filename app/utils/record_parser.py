@@ -6,12 +6,13 @@ def parse_record_text(text: str) -> dict:
     task_name = text.strip()
     record_datetime = now
 
-    # 1. "1시간 반 전에 ~"
-    match = re.search(r"(\d{1,2})시간\s*반\s*전", text)
+    # 1. "1시간 30분 전", "2시간 10분 전" 같이 복합 시간
+    match = re.search(r"(\d{1,2})시간\s*(\d{1,2})?분?\s*전", text)
     if match:
-        hour = int(match.group(1))
-        record_datetime = now - timedelta(hours=hour, minutes=30)
-        task_name = re.sub(r"\d{1,2}시간\s*반\s*전(에)?", "", text).strip()
+        hours = int(match.group(1))
+        minutes = int(match.group(2) or 0)
+        record_datetime = now - timedelta(hours=hours, minutes=minutes)
+        task_name = re.sub(r"\d{1,2}시간\s*\d{0,2}분?\s*전(에)?", "", text).strip()
 
     # 2. "30분 전", "2시간 전에"
     elif re.search(r"(\d{1,2})\s*(분|시간)\s*전", text):
