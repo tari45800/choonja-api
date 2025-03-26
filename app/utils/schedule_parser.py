@@ -36,7 +36,6 @@ def parse_date(text: str) -> date | None:
 
     return None
 
-
 # 시간 파서
 def parse_time(text: str) -> time | None:
     base = 0
@@ -47,12 +46,16 @@ def parse_time(text: str) -> time | None:
     elif "오후" in text or "밤" in text or "낮" in text:
         base = 12
 
+    # '반' 처리 (30분으로 간주)
+    has_half = "반" in text
+    text = text.replace("반", "")
+
     text = re.sub(r"(오전|오후|낮|밤|새벽)", "", text)
 
     match = re.search(r'(\d{1,2})시\s*(\d{1,2})?분?', text)
     if match:
         hour = int(match.group(1))
-        minute = int(match.group(2)) if match.group(2) else 0
+        minute = int(match.group(2)) if match.group(2) else (30 if has_half else 0)
         if hour == 12:
             hour = 0
         hour = (hour % 12) + base
@@ -63,14 +66,21 @@ def parse_time(text: str) -> time | None:
 
 # 조사 제거 + 할 일 추출기
 def parse_task_name(text: str) -> str:
-    text = re.sub(r"(오늘|내일|모레|[월화수목금토일]요일|\d{4}년|\d{1,2}월|\d{1,2}일|오전|오후|낮|밤|새벽|\d{1,2}시\s*\d{0,2}분?|까지|부터|에서|에)", "", text)
+    text = re.sub(r"(반|오늘|내일|모레|[월화수목금토일]요일|\d{4}년|\d{1,2}월|\d{1,2}일|오전|오후|낮|밤|새벽|\d{1,2}시\s*\d{0,2}분?|까지|부터|에서|에)", "", text)
     return text.replace(",", "").strip()
 
+# 소요시간 파서
+def parse_duration(text: str) -> int | None:
+    match = re.search(r"(\\d{1,3})\\s*분\\s*(걸리(?:고|구|면|는|다|려|ㅁ)?|소요)", text)
+    if match:
+        return int(match.group(1))
+    return None
 
 # 통합 파서
 def parse_schedule_text(text: str):
     return {
         "date": parse_date(text),
         "time": parse_time(text),
-        "task": parse_task_name(text)
+        "task": parse_task_name(text),
+        "duration": parse_duration(text)
     }

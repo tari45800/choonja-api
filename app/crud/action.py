@@ -1,14 +1,17 @@
 from sqlalchemy.orm import Session
 from app.models.action import Action
 
-def get_or_create_action(db: Session, name: str) -> tuple[Action, str]:
-    action = db.query(Action).filter(Action.name == name).first()
+def get_or_create_action(db: Session, name: str, category: str = "task") -> Action:
+    action = db.query(Action).filter(
+        Action.name == name
+    ).first()
+    
     if action:
         return action
-    
+
     new_action = Action(
         name=name,
-        category="task",
+        category=category,
         parent_id=None,
         duration_min=None,
         briefing_key=None,
