@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app.schemas.todo import TodoText
+from app.schemas.task import TodoText
 from app.services.schedule_service import register_schedule
 from app.core.database import get_db
 
