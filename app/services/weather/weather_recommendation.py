@@ -7,11 +7,7 @@ def recommend_outfit(temp_c, tmx, tmn, month):
     daily_gap = tmx - tmn
     outfit = ""
     outer = ""
-
-    # 겉옷 여부 판단
-    if daily_gap >= 10:
-        outer = "일교차가 커서 겉옷이 필요해요."
-
+  
     # 계절 구분
     if 3 <= month <= 4:
         season = "봄"
@@ -55,9 +51,6 @@ def recommend_outfit(temp_c, tmx, tmn, month):
     return f"{outfit} {outer}".strip()
 
 def recommend_items(sky, rain, pcp, wsd):
-    """
-    Siri가 읽을 준비물 추천 멘트를 생성합니다.
-    """
     items = []
 
     # 강수량 숫자로 변환
@@ -97,7 +90,7 @@ def recommend_items(sky, rain, pcp, wsd):
         items.append("바람막이")
 
     if not items:
-        return "특별히 챙길 준비물은 없어요."
+        return "특별히 날씨로 챙길 준비물은 없어요."
 
     # Siri가 자연스럽게 읽을 수 있게 구성
     if len(items) == 1:

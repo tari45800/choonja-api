@@ -1,9 +1,11 @@
 from fastapi import APIRouter
+from app.services.outing_prepare_service import get_outing_preparation_message
 
 router = APIRouter()
 
-@router.get("/outing/prepare")
+@router.get("/api/outing/prepare")
 async def get_outing_preparation():
+    message = get_outing_preparation_message()
     return {
-        "message": "외출 준비 정보 호출 성공! (임시 라우터)"
+        "message": message
     }

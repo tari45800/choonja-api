@@ -29,6 +29,8 @@ def register_outing_schedule(db: Session, text: str):
     # 일정 등록 (출발 시간 기준)
     schedule_status = create_schedule_schedule(db, action, schedule_date, adjusted_time)
 
+    # 스케줄 id 가져오기
+
     return {
         "message": schedule_status
     }
