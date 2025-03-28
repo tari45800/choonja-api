@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Boolean, DateTime, Date, Time, F
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.core.database import Base
+from datetime import datetime, timezone
 
 class Schedule(Base):
     __tablename__ = "schedules"
@@ -10,17 +11,17 @@ class Schedule(Base):
     action_id = Column(Integer, ForeignKey("actions.id"), nullable=False)
     year = Column(Integer)
     month = Column(String(50))
-    day_of_month = Column(String(50))
-    day_of_week = Column(String(50))
-    time = Column(Time)
-    until_date = Column(Date)
-    completed_at = Column(DateTime)
+    day = Column(String(50))
+    day_of_week = Column(String(50), nullable=True)
+    time = Column(Time, nullable=True)
+    until_date = Column(Date, nullable=True)
+    completed_at = Column(DateTime, nullable=True)
     is_checked = Column(Boolean, default=False)
-    memo = Column(String)
-    briefing = Column(String(255))
+    memo = Column(String(1000), nullable=True) 
+    briefing = Column(String(255), nullable=True)
     is_alarm_enabled = Column(Boolean, default=False)
     is_voice_enabled = Column(Boolean, default=False)
     is_push_enabled = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     action = relationship("Action")
