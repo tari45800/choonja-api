@@ -4,6 +4,7 @@ from app.models.schedule import Schedule
 from app.models.action import Action
 from app.utils.formator.format_datetime import format_datetime
 from sqlalchemy import desc
+from app.crud.action import find_action
 
 # 특정 스케줄 찾기
 def find_schedule(action_id: int, year: int, month: str, day: str, db: Session):
@@ -162,3 +163,28 @@ def delete_schedule(schedule: Schedule, db: Session, action_name: str = None):
         "message": message
     }
 
+
+# 디데이 삭제
+def delete_d_days(an: str, db: Session):
+    action_name = f"{an} 디데이"
+    action_check = find_action(action_name, db)
+    if not action_check["result"]:
+        return action_check
+
+    action = action_check["result"]
+
+    schedules = db.query(Schedule).filter(Schedule.action_id == action.id).all()
+    if not schedules:
+        return {
+            "result": None,
+            "message": f"'{action_name}' 관련 일정이 없습니다."
+        }
+
+    for s in schedules:
+        db.delete(s)
+    db.commit()
+
+    return {
+        "result": None,
+        "message": f"'{action_name}'에 연결된 {len(schedules)}개 일정을 모두 삭제했습니다."
+    }
