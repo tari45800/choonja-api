@@ -1,13 +1,14 @@
 from fastapi import FastAPI
 from app.core.database import Base, engine
 import uvicorn
-from app.routers import task
+from app.routers import task, fixed
 
 app = FastAPI()
 
 Base.metadata.create_all(bind=engine)
 
 app.include_router(task.router)
+app.include_router(fixed.router)
 
 
 @app.get("/")

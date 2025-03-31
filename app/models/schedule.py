@@ -1,8 +1,11 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, Date, Time, ForeignKey
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from app.core.database import Base
-from datetime import datetime, timezone
+
+KST = timezone(timedelta(hours=9))
+def now_kst():
+    return datetime.now(KST)
 
 class Schedule(Base):
     __tablename__ = "schedules"
@@ -22,6 +25,6 @@ class Schedule(Base):
     is_alarm_enabled = Column(Boolean, default=False)
     is_voice_enabled = Column(Boolean, default=False)
     is_push_enabled = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=now_kst)
 
     action = relationship("Action")

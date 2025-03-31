@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from app.models.schedule import Schedule
 from app.models.action import Action
 from app.utils.formator.format_datetime import format_datetime
+from sqlalchemy import desc
 
 # 특정 스케줄 찾기
 def find_schedule(action_id: int, year: int, month: str, day: str, db: Session):
@@ -116,5 +117,48 @@ def update_schedule(
 
     return {
         "result": current_schedule,
-        "message": f"스케줄이 {formatted_before}에서 {formatted_after}로 변경되었습니다."
+        "message": f"스케줄이 {formatted_before}에서 {formatted_after}으로 변경되었습니다."
     }
+
+# 마지막 일정 가져오기
+def get_latest_schedule(db: Session, action_id: int = None):
+    query = db.query(Schedule)
+    action_name = None
+
+    if action_id:
+        query = query.filter(Schedule.action_id == action_id)
+        action = db.query(Action).filter(Action.id == action_id).first()
+        action_name = action.name if action else None
+
+    latest = query.order_by(desc(Schedule.created_at)).first()
+
+    if latest:
+        msg = (
+            f"가장 최근 등록된 '{action_name}' 일정은 {latest.year}-{latest.month}-{latest.day} 입니다."
+            if action_name else
+            f"가장 최근 일정은 {latest.year}-{latest.month}-{latest.day} 입니다."
+        )
+    else:
+        msg = (
+            f"'{action_name}' 일정은 등록되어 있지 않습니다."
+            if action_name else
+            "최근 일정이 없습니다."
+        )
+
+    return {
+        "result": latest,
+        "message": msg
+    }
+
+# 스케줄 삭제
+def delete_schedule(schedule: Schedule, db: Session, action_name: str = None):
+    db.delete(schedule)
+    db.commit()
+
+    message = f"'{action_name}' 일정이 삭제되었습니다." if action_name else "일정이 삭제되었습니다."
+    
+    return {
+        "result": schedule,
+        "message": message
+    }
+

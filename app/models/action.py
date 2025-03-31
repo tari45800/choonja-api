@@ -1,7 +1,12 @@
 from sqlalchemy import Column, Integer, String, Enum, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from app.core.database import Base
+
+KST = timezone(timedelta(hours=9))
+
+def now_kst():
+    return datetime.now(KST)
 
 class Action(Base):
     __tablename__ = "actions"
@@ -11,6 +16,6 @@ class Action(Base):
     category = Column(Enum('task', 'fixed', 'log', 'routine'), nullable=False)
     parent_id = Column(Integer, ForeignKey("actions.id"), nullable=True)
     duration_min = Column(Integer, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=now_kst)
 
     parent = relationship("Action", remote_side=[id])
