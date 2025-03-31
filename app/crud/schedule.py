@@ -188,3 +188,29 @@ def delete_d_days(an: str, db: Session):
         "result": None,
         "message": f"'{action_name}'에 연결된 {len(schedules)}개 일정을 모두 삭제했습니다."
     }
+
+# 스케줄 메모 수정
+def update_schedule_memo(schedule: Schedule, memo: str, db: Session):
+    schedule.memo = memo
+    db.commit()
+    db.refresh(schedule)
+
+    return {
+        "result": schedule,
+        "message": f"'{schedule.id}'번 일정의 메모가 '{memo}'로 수정되었습니다."
+    }
+
+
+# id로 스케줄 찾기
+def find_schedule_by_id(schedule_id: int, db: Session):
+    schedule = db.query(Schedule).filter(Schedule.id == schedule_id).first()
+    if schedule:
+        return {
+            "result": schedule,
+            "message": f"'{schedule_id}'번 일정을 찾았습니다."
+        }
+    else:
+        return {
+            "result": None,
+            "message": f"'{schedule_id}'번 일정이 존재하지 않습니다."
+        }
