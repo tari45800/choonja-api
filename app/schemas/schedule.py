@@ -14,10 +14,10 @@ class ScheduleOut(BaseModel):
     completed_at: Optional[datetime]
     is_checked: bool
     memo: Optional[str]
-    briefing: Optional[str]
-    is_alarm_enabled: bool
-    is_voice_enabled: bool
-    is_push_enabled: bool
+    is_checked: Optional[bool] = False
+    is_alarm_enabled: Optional[bool] = False
+    is_voice_enabled: Optional[bool] = False
+    is_push_enabled: Optional[bool] = False
     created_at: datetime
 
     model_config = {

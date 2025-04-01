@@ -60,7 +60,6 @@ def create_schedule(
         is_alarm_enabled=is_alarm_enabled,
         is_voice_enabled=is_voice_enabled,
         is_push_enabled=is_push_enabled,
-        created_at=datetime.now(timezone.utc)
     )
     db.add(schedule)
     db.commit()
@@ -106,7 +105,6 @@ def update_schedule(
     current_schedule.month = new_month
     current_schedule.day = new_day
     current_schedule.time = new_time
-    current_schedule.created_at = datetime.now(timezone.utc)
 
     # DB에 반영
     db.commit()
@@ -214,3 +212,40 @@ def find_schedule_by_id(schedule_id: int, db: Session):
             "result": None,
             "message": f"'{schedule_id}'번 일정이 존재하지 않습니다."
         }
+
+# 레코드 업데이트
+def update_record(
+    current_schedule,  # 이미 불러온 Schedule 객체
+    new_year: int,
+    new_month: str,
+    new_day: str,
+    db: Session,
+    new_time=None
+):
+    before_dt = datetime(
+        current_schedule.year,
+        int(current_schedule.month),
+        int(current_schedule.day),
+        hour=current_schedule.time.hour if current_schedule.time else 0,
+        minute=current_schedule.time.minute if current_schedule.time else 0
+    )
+    after_dt = datetime(
+        new_year,
+        int(new_month),
+        int(new_day),
+        hour=new_time.hour if new_time else 0,
+        minute=new_time.minute if new_time else 0
+    )
+
+    current_schedule.year = new_year
+    current_schedule.month = new_month
+    current_schedule.day = new_day
+    current_schedule.time = new_time
+
+    db.commit()
+    db.refresh(current_schedule)
+
+    return {
+        "result": current_schedule,
+        "message": f"레코드가 {format_datetime(before_dt)}에서 {format_datetime(after_dt)}으로 수정되었습니다."
+    }
