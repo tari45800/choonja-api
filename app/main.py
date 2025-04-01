@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from app.core.database import Base, engine
 import uvicorn
-from app.routers import task, fixed, d_day, record
+from app.routers import task, fixed, d_day, record, event
 
 app = FastAPI()
 
@@ -11,6 +11,7 @@ app.include_router(task.router)
 app.include_router(fixed.router)
 app.include_router(d_day.router)
 app.include_router(record.router)
+app.include_router(event.router)
 
 
 @app.get("/")

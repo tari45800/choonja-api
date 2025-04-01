@@ -71,7 +71,7 @@ def create_schedule(
 
     return {
         "result": schedule,
-        "message": f"'{action_name}' 할 일이 {formatted_date}에 새로 등록되었습니다."
+        "message": f"'{action_name}' 일정이 {formatted_date}에 새로 등록되었습니다."
     }
 
 # 스케줄 수정
