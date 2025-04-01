@@ -6,7 +6,8 @@ from app.services.record import create_record_service
 
 from app.services.record import (
   create_record_service,
-  update_latest_record_service
+  update_latest_record_service,
+  delete_latest_record_service
 )
 
 router = APIRouter(prefix="/records", tags=["Records"])
@@ -20,3 +21,7 @@ def create_record(body: RecordText, db: Session = Depends(get_db)):
 @router.put("/latest", response_model=RecordResponse)
 def update_latest_task(body: RecordText, db: Session = Depends(get_db)):
     return update_latest_record_service(body.text, db)
+
+@router.delete("/", response_model=RecordResponse)
+def update_latest_task(body: RecordText, db: Session = Depends(get_db)):
+    return delete_latest_record_service(body.text, db)
