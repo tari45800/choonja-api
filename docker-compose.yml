@@ -5,8 +5,8 @@ services:
     image: mysql:8.0
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: "choonja"
     ports:
       - "3307:3306"
     volumes:
@@ -17,6 +17,20 @@ services:
     restart: always
     depends_on:
       - db
+    command:
+      [
+        "dockerize",
+        "-wait",
+        "tcp://db:3306",
+        "-timeout",
+        "30s",
+        "uvicorn",
+        "app.main:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+      ]
     ports:
       - "8000:8000"
     env_file:
