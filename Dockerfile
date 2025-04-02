@@ -11,6 +11,8 @@ WORKDIR /code
 # Copy app and requirements
 COPY ./app /code/app
 COPY requirements.txt /code/
+COPY docker-compose.yml /code/
+COPY Procfile /code/
 
 # Install dependencies
 RUN pip install --no-cache-dir --upgrade pip && \
