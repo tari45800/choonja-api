@@ -9,6 +9,8 @@ services:
       - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - backend
 
   api:
     build: .
@@ -33,6 +35,12 @@ services:
       - "8000:8000"
     env_file:
       - .env
+    networks:
+      - backend
 
 volumes:
   db_data:
+
+networks:
+  backend:
+    driver: bridge
